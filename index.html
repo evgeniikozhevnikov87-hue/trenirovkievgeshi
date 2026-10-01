@@ -8,9 +8,6 @@
 <meta name="apple-mobile-web-app-title" content="Тренировки">
 <meta name="theme-color" content="#7A2D5A">
 <title>Программа тренировок Евгеши</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 /* Layout: одна колонка под телефон, липкая навигация по дням, карточки упражнений со схемой, журнал отметок в конце */
 :root{
@@ -18,9 +15,9 @@
   --accent:#7A2D5A; --accent-soft:#F3E6EE;
   --m-glute:#8E3B6C; --m-add:#0F6E8C; --m-chest:#A8590E; --m-core:#4F7A1E; --m-other:#6B7480;
   --ok:#2E7D4F; --warn:#B4441C; --ghost:#A9B2BA;
-  --f-display:"Unbounded","Golos Text",system-ui,sans-serif;
-  --f-body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --f-display:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#13171C; --surface:#1C2229; --ink:#E9EDF0; --muted:#9AA5AF; --line:#2E3740;
@@ -174,7 +171,7 @@ html{scroll-behavior:smooth}
     <span><i style="background:var(--m-add)"></i>Внутренняя сторона бедра</span>
     <span><i style="background:var(--m-chest)"></i>Грудные</span>
     <span><i style="background:var(--m-core)"></i>Кор</span>
-    <span><i class="ln"></i>Исходное положение</span>
+    <span><i class="ln"></i>Исходное положение</span><span>Фигура показывает движение в темпе упражнения</span>
   </div>
 </section>
 
@@ -290,10 +287,10 @@ const P={
           hl:[{c:[101,77,9],col:F}],arrows:[[112,93,112,72]],cap:"Свободная нога вытянута по линии бедра опорной"},
   iso:{end:{head:[38,90],lines:[[47,95,100,95,128,72,146,98],[50,97,92,98]]},
           seg:[{p:[103,93,125,74],col:A}],pillow:[130,66],arrows:[[112,50,124,60],[150,50,138,60]],cap:"Колени давят на подушку навстречу друг другу, 70–80 % усилия"},
-  donkey:{start:{head:[152,50],lines:[[143,58,85,60],[140,60,140,99],[85,60,85,99,60,99]]},
+  donkey:{start:{head:[152,50],lines:[[143,58,85,60],[140,60,140,99],[85,60,85,99,60,99],[85,60,85,99,60,99]]},
           end:{head:[152,50],lines:[[143,58,85,60],[140,60,140,99],[85,60,85,99,60,99],[85,60,54,60,54,34]]},
           hl:[{c:[84,54,8],col:F}],arrows:[[66,92,52,44]],ghostLines:[[85,60,85,99,60,99]],cap:"Колено поднимается назад-вверх только до линии спины"},
-  hydrant:{start:{head:[100,36],lines:[[82,48,118,48],[100,48,100,56],[84,56,116,56],[82,48,80,99],[118,48,120,99],[85,56,85,99],[115,56,115,99]]},
+  hydrant:{start:{head:[100,36],lines:[[82,48,118,48],[100,48,100,56],[84,56,116,56],[82,48,80,99],[118,48,120,99],[85,56,85,99],[115,56,115,99,115,99]]},
           end:{head:[100,36],lines:[[82,48,118,48],[100,48,100,56],[84,56,116,56],[82,48,80,99],[118,48,120,99],[85,56,85,99],[115,56,148,62,152,72]]},
           hl:[{c:[116,58,8],col:F}],arrows:[[128,92,150,70]],ghostLines:[[115,56,115,99]],cap:"Вид сзади: согнутая нога уходит в сторону до уровня таза"},
   clam:{start:lyingSide([[100,90,138,96,108,99],[100,88,138,92,108,95]]),
@@ -310,13 +307,13 @@ const P={
           seg:[{p:[90,71,74,74],col:A},{p:[110,71,126,74],col:A}],arrows:[[150,30,150,58]],cap:"Вид спереди: таз опускается до угла 90° в коленях, колени по линии носков"},
   palms:{end:{head:[100,20],lines:[[100,30,100,80],[80,36,120,36],[80,36,66,52,96,50],[120,36,134,52,104,50],[90,80,110,80],[90,80,88,99],[110,80,112,99]]},
           hl:[{c:[90,42,7],col:C},{c:[110,42,7],col:C}],arrows:[[60,64,90,58],[140,64,110,58]],cap:"Ладони у груди, локти в стороны, давить ладонью в ладонь"},
-  wall:{wall:160,start:{head:[124,24],lines:[[62,99,90,66,118,34],[118,36,160,38]]},
+  wall:{wall:160,start:{head:[124,24],lines:[[62,99,90,66,118,34],[118,36,139,37,160,38]]},
           end:{head:[141,22],lines:[[62,99,96,64,134,32],[134,34,142,52,160,38]]},
           hl:[{c:[136,40,7],col:C}],arrows:[[100,20,124,14]],cap:"Тело прямое от пяток до макушки, грудь приближается к стене"},
-  sofaPush:{...SOFA,start:{head:[133,48],lines:[[40,99,82,78,125,55],[125,57,146,70]]},
+  sofaPush:{...SOFA,start:{head:[133,48],lines:[[40,99,82,78,125,55],[125,57,135.5,63.5,146,70]]},
           end:{head:[140,60],lines:[[40,99,85,83,132,66],[132,68,124,82,146,70]]},
           hl:[{c:[133,72,7],col:C}],arrows:[[112,40,124,58]],cap:"Руки на сиденье дивана, корпус опускается одной линией"},
-  climber:{...SOFA,start:{head:[133,48],lines:[[40,99,82,78,125,55],[125,57,146,70]]},
+  climber:{...SOFA,start:{head:[133,48],lines:[[40,99,82,78,125,55],[125,57,146,70],[82,78,61,88.5,40,99]]},
           end:{head:[133,48],lines:[[40,99,82,78,125,55],[125,57,146,70],[82,78,110,80,96,97]]},
           seg:[{p:[90,74,118,59],col:K}],arrows:[[58,90,100,86]],ghostLines:[[40,99,82,78]],cap:"Колено шагом подтягивается к груди, затем смена ноги"}
 };
@@ -325,6 +322,7 @@ const NS="http://www.w3.org/2000/svg";
 function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e}
 function pts(a){let s=[];for(let i=0;i<a.length;i+=2)s.push(a[i]+","+a[i+1]);return s.join(" ")}
 let uid=0;
+const REDUCED=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}})();
 function drawSchema(key){
   const p=P[key];const id="ah"+(uid++);
   const svg=el("svg",{viewBox:"0 0 200 108",role:"img","aria-label":p.cap});
@@ -339,10 +337,23 @@ function drawSchema(key){
     ghosts.forEach(l=>svg.appendChild(el("polyline",{points:pts(l),class:"s-ghost"})));
     if(!p.ghostLines && p.start.head)svg.appendChild(el("circle",{cx:p.start.head[0],cy:p.start.head[1],r:7,class:"s-ghost-h"}));
   }
-  (p.hl||[]).forEach(h=>svg.appendChild(el("circle",{cx:h.c[0],cy:h.c[1],r:h.c[2],fill:h.col,"fill-opacity":".45"})));
+  (p.hl||[]).forEach(h=>{const c=el("circle",{cx:h.c[0],cy:h.c[1],r:h.c[2],fill:h.col,"fill-opacity":".45"});
+    if(!REDUCED)c.appendChild(el("animate",{attributeName:"fill-opacity",values:p.start?".15;.6;.6;.15;.15":".25;.65;.25",keyTimes:p.start?"0;0.4;0.55;0.95;1":"0;0.5;1",dur:p.start?"3.2s":"2s",repeatCount:"indefinite"}));
+    svg.appendChild(c)});
   if(p.pillow)svg.appendChild(el("ellipse",{cx:p.pillow[0],cy:p.pillow[1],rx:9,ry:6,class:"s-prop"}));
-  p.end.lines.forEach(l=>svg.appendChild(el("polyline",{points:pts(l),class:"s-body"})));
-  svg.appendChild(el("circle",{cx:p.end.head[0],cy:p.end.head[1],r:7,class:"s-head"}));
+  const anim=p.start&&!REDUCED;
+  const AV=(a,b)=>[a,b,b,a,a].join(";");
+  const AT={keyTimes:"0;0.4;0.55;0.95;1",dur:"3.2s",repeatCount:"indefinite",calcMode:"spline",keySplines:"0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1;0 0 1 1"};
+  p.end.lines.forEach((l,i)=>{const pl=el("polyline",{points:pts(l),class:"s-body"});
+    const s=anim&&p.start.lines[i];
+    if(s&&s.length===l.length){pl.setAttribute("points",pts(s));pl.appendChild(el("animate",Object.assign({attributeName:"points",values:AV(pts(s),pts(l))},AT)))}
+    svg.appendChild(pl)});
+  const hd=el("circle",{cx:p.end.head[0],cy:p.end.head[1],r:7,class:"s-head"});
+  if(anim&&(p.start.head[0]!==p.end.head[0]||p.start.head[1]!==p.end.head[1])){
+    hd.setAttribute("cx",p.start.head[0]);hd.setAttribute("cy",p.start.head[1]);
+    hd.appendChild(el("animate",Object.assign({attributeName:"cx",values:AV(p.start.head[0],p.end.head[0])},AT)));
+    hd.appendChild(el("animate",Object.assign({attributeName:"cy",values:AV(p.start.head[1],p.end.head[1])},AT)));}
+  svg.appendChild(hd);
   (p.seg||[]).forEach(s=>svg.appendChild(el("line",{x1:s.p[0],y1:s.p[1],x2:s.p[2],y2:s.p[3],stroke:s.col,"stroke-width":7,"stroke-linecap":"round","stroke-opacity":".8"})));
   (p.arrows||[]).forEach(a=>svg.appendChild(el("line",{x1:a[0],y1:a[1],x2:a[2],y2:a[3],class:"s-arrow","marker-end":"url(#"+id+")"})));
   return svg;
