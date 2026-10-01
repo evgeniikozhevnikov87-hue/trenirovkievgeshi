@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Тренировки">
+<meta name="theme-color" content="#7A2D5A">
+<title>Программа тренировок Евгеши</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: одна колонка под телефон, липкая навигация по дням, карточки упражнений со схемой, журнал отметок в конце */
+:root{
+  --bg:#F1F3F4; --surface:#FFFFFF; --ink:#1B2129; --muted:#5D6873; --line:#DCE1E5;
+  --accent:#7A2D5A; --accent-soft:#F3E6EE;
+  --m-glute:#8E3B6C; --m-add:#0F6E8C; --m-chest:#A8590E; --m-core:#4F7A1E; --m-other:#6B7480;
+  --ok:#2E7D4F; --warn:#B4441C; --ghost:#A9B2BA;
+  --f-display:"Unbounded","Golos Text",system-ui,sans-serif;
+  --f-body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#13171C; --surface:#1C2229; --ink:#E9EDF0; --muted:#9AA5AF; --line:#2E3740;
+  --accent:#E08DBB; --accent-soft:#3A2432;
+  --m-glute:#E08DBB; --m-add:#5BC0DE; --m-chest:#F0AE62; --m-core:#A6D36A; --m-other:#A3ADB7;
+  --ok:#6BCB8E; --warn:#F08A64; --ghost:#55606B; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#13171C; --surface:#1C2229; --ink:#E9EDF0; --muted:#9AA5AF; --line:#2E3740;
+  --accent:#E08DBB; --accent-soft:#3A2432;
+  --m-glute:#E08DBB; --m-add:#5BC0DE; --m-chest:#F0AE62; --m-core:#A6D36A; --m-other:#A3ADB7;
+  --ok:#6BCB8E; --warn:#F08A64; --ghost:#55606B; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);margin:0}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:1.65rem;font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.2rem;font-weight:700}
+h3{font-size:1.02rem;font-weight:500}
+p{margin:0}
+.eyebrow{font:500 .72rem/1 var(--f-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--accent)}
+.muted{color:var(--muted)}
+header{display:flex;flex-direction:column;gap:10px}
+.facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.fact{font-size:.82rem;padding:4px 10px;border-radius:99px;background:var(--surface);border:1px solid var(--line)}
+
+nav.jump{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);margin-inline:-16px;padding:8px 16px;border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav.jump::-webkit-scrollbar{display:none}
+nav.jump a{flex:none;text-decoration:none;color:var(--ink);font-size:.85rem;font-weight:500;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--surface)}
+nav.jump a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+section{display:flex;flex-direction:column;gap:14px;scroll-margin-top:60px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+ul.clean,ol.clean{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.rules li b{font-weight:600}
+
+.dayhead{display:flex;flex-direction:column;gap:6px;padding-top:6px;border-top:3px solid var(--accent)}
+.dayhead .tag{font:500 .78rem var(--f-mono);color:var(--muted)}
+.scheme{font-size:.9rem;color:var(--muted)}
+
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.ex-top{display:flex;gap:12px;align-items:flex-start;padding:14px 16px 0}
+.ex-num{flex:none;font:700 1rem var(--f-display);color:var(--accent);min-width:2.1em}
+.ex-title{display:flex;flex-direction:column;gap:6px;min-width:0}
+.dose{display:flex;flex-wrap:wrap;gap:6px}
+.dose span{font:500 .76rem var(--f-mono);padding:3px 8px;border-radius:6px;background:var(--accent-soft);color:var(--ink);font-variant-numeric:tabular-nums}
+.fig{margin:10px 16px 0;border-radius:10px;background:var(--bg);overflow-x:auto}
+.fig svg{display:block;width:100%;max-width:520px;margin:0 auto;height:auto}
+.fig .cap{font-size:.74rem;color:var(--muted);text-align:center;padding:0 8px 8px}
+.ex-body{padding:12px 16px 16px;display:flex;flex-direction:column;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.78rem;padding:3px 9px 3px 7px;border-radius:99px;border:1px solid var(--line);display:inline-flex;align-items:center;gap:6px}
+.chip i{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.chip.main{font-weight:600}
+.lbl{font:500 .7rem/1 var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px}
+.err li::marker{color:var(--warn)}
+.safe{font-size:.88rem;padding:8px 12px;border-radius:8px;border:1px dashed var(--line);color:var(--muted)}
+.safe b{color:var(--ink);font-weight:600}
+.ref{font-size:.9rem}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:.82rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%}
+.legend .ln{width:18px;height:0;border-top:2px dashed var(--ghost);border-radius:0}
+
+/* SVG schematic */
+.s-floor{stroke:var(--line);stroke-width:2}
+.s-prop{fill:var(--surface);stroke:var(--muted);stroke-width:1.4}
+.s-ghost{stroke:var(--ghost);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:4 4}
+.s-ghost-h{fill:none;stroke:var(--ghost);stroke-width:2;stroke-dasharray:3 3}
+.s-body{stroke:var(--ink);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.s-head{fill:var(--ink)}
+.s-arrow{stroke:var(--accent);stroke-width:2;fill:none}
+.s-arrowhead{fill:var(--accent)}
+.s-txt{font:500 8px var(--f-body);fill:var(--muted)}
+
+/* journal */
+.jtools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.jtools label{font-size:.88rem}
+.jtools input{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.progress{display:flex;flex-direction:column;gap:6px}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar b{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:440px;font-size:.88rem}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:center;vertical-align:middle}
+th{font:500 .7rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td.wk{text-align:left;padding-left:12px;font-variant-numeric:tabular-nums}
+td.wk b{font-weight:600}
+td.wk small{display:block;color:var(--muted);font-size:.74rem}
+tr:last-child td{border-bottom:0}
+.cell{font:inherit;width:100%;min-width:56px;min-height:40px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--muted);cursor:pointer;font-size:.8rem}
+.cell[data-v="done"]{background:var(--ok);border-color:var(--ok);color:var(--surface);font-weight:600}
+.cell[data-v="skip"]{color:var(--warn);border-color:var(--warn);background:var(--surface)}
+.cell[data-v="ok"]{color:var(--ok);border-color:var(--ok);background:var(--surface);font-weight:600}
+.cell[data-v="pain"]{background:var(--warn);border-color:var(--warn);color:var(--surface);font-weight:600}
+.status{font-size:.78rem;color:var(--muted)}
+.stop li{color:var(--ink)}
+.stop li::marker{color:var(--warn)}
+footer{font-size:.82rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Дом · без инвентаря · 3 раза в неделю</span>
+  <h1>Программа тренировок Евгеши</h1>
+  <p class="muted">Ягодицы, внутренняя сторона бедра, грудные мышцы и альпинист. Без выпадов, прыжков и осевой нагрузки на поясницу.</p>
+  <div class="facts">
+    <span class="fact">30–40 мин</span><span class="fact">Пн / Ср / Пт</span><span class="fact">уровень: новичок</span><span class="fact">4 недели + продолжение</span>
+  </div>
+</header>
+
+<nav class="jump" aria-label="Разделы">
+  <a href="#rules">Правила</a><a href="#warm">Разминка</a><a href="#dayA">День А</a><a href="#dayB">День Б</a><a href="#dayC">День В</a><a href="#climber">Альпинист</a><a href="#cool">Заминка</a><a href="#log">Журнал</a>
+</nav>
+
+<section id="rules">
+  <h2>Как заниматься</h2>
+  <div class="panel">
+    <ul class="clean rules">
+      <li><b>Формат — круг.</b> Упражнения дня выполняются подряд, отдых между ними 15–20 с. После круга отдых 60–90 с, затем следующий круг.</li>
+      <li><b>Темп.</b> 2 с на усилие, 1 с пауза, 2 с на возврат. Медленно и под контролем.</li>
+      <li><b>Дыхание.</b> Выдох на усилии. Дыхание не задерживать.</li>
+      <li><b>Поясница.</b> Нейтральное положение: без прогиба и без округления, живот слегка подтянут.</li>
+      <li><b>Стопы.</b> Кроссовки с поддержкой свода или коврик. Вес распределён на «треугольник» стопы: пятка, основание большого пальца, основание мизинца.</li>
+      <li><b>Подручные предметы.</b> Подушка или свёрнутое полотенце, устойчивый стул и диван.</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <div class="lbl">Нагрузка по неделям</div>
+    <div class="tablewrap" style="border:0">
+      <table style="min-width:360px">
+        <thead><tr><th style="text-align:left;padding-left:12px">Недели</th><th>Круги</th><th>Отдых после круга</th><th>Альпинист</th></tr></thead>
+        <tbody>
+          <tr><td class="wk"><b>1–2</b><small>освоение техники</small></td><td>2</td><td>90 с</td><td>3 × 20 с</td></tr>
+          <tr><td class="wk"><b>3–4</b><small>рост объёма</small></td><td>3</td><td>60 с</td><td>4 × 30 с</td></tr>
+          <tr><td class="wk"><b>5–8</b><small>отягощение</small></td><td>3</td><td>60 с</td><td>4 × 30 с, опора ниже</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:.88rem">С 5-й недели: бутылка воды 1–1,5 л на таз в мостиках и на бедро в упражнениях лёжа на боку, либо фитнес-резинка.</p>
+  </div>
+  <div class="legend" aria-label="Обозначения на схемах">
+    <span><i style="background:var(--m-glute)"></i>Ягодицы</span>
+    <span><i style="background:var(--m-add)"></i>Внутренняя сторона бедра</span>
+    <span><i style="background:var(--m-chest)"></i>Грудные</span>
+    <span><i style="background:var(--m-core)"></i>Кор</span>
+    <span><i class="ln"></i>Исходное положение</span>
+  </div>
+</section>
+
+<section id="warm">
+  <h2>Разминка · 5 мин</h2>
+  <div class="panel">
+    <ol class="clean">
+      <li><b>Ходьба на месте</b> с работой рук — 1 мин. Ставить стопу мягко, без шлепков.</li>
+      <li><b>Круги плечами</b> — по 10 вперёд и назад. Руки расслаблены.</li>
+      <li><b>«Гусеница» стопой</b> — по 10 на ногу. Сидя на стуле, сгибать пальцы и подтягивать стопу вперёд по полу, пятка остаётся на месте. Укрепляет свод стопы.</li>
+      <li><b>Наклоны таза лёжа</b> — 10. На спине, колени согнуты. На выдохе мягко прижать поясницу к полу, на вдохе отпустить.</li>
+      <li><b>Отведение ноги стоя у опоры</b> — по 10 на сторону. Корпус ровный, нога уходит в сторону на 20–30 см.</li>
+      <li><b>Мостик-активация</b> — 10 без паузы, небольшая амплитуда.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="dayA">
+  <div class="dayhead"><span class="tag">ПОНЕДЕЛЬНИК</span><h2>День А · Ягодицы + грудь</h2><p class="scheme">Круг: А1 → А2 → А3 → А4 → А5, затем альпинист.</p></div>
+  <div id="list-A" class="list" style="display:flex;flex-direction:column;gap:14px"></div>
+</section>
+
+<section id="dayB">
+  <div class="dayhead"><span class="tag">СРЕДА</span><h2>День Б · Внутренняя сторона бедра + грудь</h2><p class="scheme">Круг: Б1 → Б2 → Б3 → Б4 → Б5, затем альпинист.</p></div>
+  <div id="list-B" style="display:flex;flex-direction:column;gap:14px"></div>
+</section>
+
+<section id="dayC">
+  <div class="dayhead"><span class="tag">ПЯТНИЦА</span><h2>День В · Смешанный + грудь</h2><p class="scheme">Круг: В1 → В2 → В3 → В4 → В5, затем альпинист.</p></div>
+  <div id="list-C" style="display:flex;flex-direction:column;gap:14px"></div>
+</section>
+
+<section id="climber">
+  <div class="dayhead"><span class="tag">ВСЕ ДНИ · ФИНИШ</span><h2>Альпинист с опорой</h2><p class="scheme">После основного круга. Шаговый вариант, без прыжков.</p></div>
+  <div id="list-K" style="display:flex;flex-direction:column;gap:14px"></div>
+</section>
+
+<section id="cool">
+  <h2>Заминка · 5 мин</h2>
+  <div class="panel">
+    <ol class="clean">
+      <li><b>Растяжка ягодиц лёжа</b> — по 30 с. На спине, стопа одной ноги на колене другой, подтянуть нижнюю ногу к себе за бедро. Поясница на полу.</li>
+      <li><b>«Бабочка» лёжа</b> — 40 с. На спине, стопы вместе, колени свободно разведены. Тянет внутреннюю сторону бедра.</li>
+      <li><b>Растяжка груди в дверном проёме</b> — по 20–30 с. Предплечье на косяке на уровне плеча, мягкий шаг вперёд до лёгкого натяжения.</li>
+      <li><b>Дыхание лёжа</b> — 1 мин. Колени согнуты, медленный вдох носом, длинный выдох.</li>
+    </ol>
+  </div>
+  <div class="panel">
+    <div class="lbl">Стоп-сигналы — прекратить упражнение</div>
+    <ul class="clean stop">
+      <li>Боль или прострел в пояснице, особенно отдающие в ногу.</li>
+      <li>Онемение или покалывание в ногах.</li>
+      <li>Боль в стопе или под пальцами.</li>
+    </ul>
+    <p class="muted" style="font-size:.88rem">Из-за грыжи программу желательно показать неврологу или врачу ЛФК перед стартом.</p>
+  </div>
+</section>
+
+<section id="log">
+  <h2>Журнал тренировок</h2>
+  <p class="muted" style="font-size:.9rem">Нажмите на ячейку: первое нажатие — «сделано», второе — «пропуск», третье — очистить. В колонке «Спина» отмечается самочувствие поясницы за неделю.</p>
+  <div class="jtools">
+    <label for="startDate">Старт программы:</label>
+    <input type="date" id="startDate">
+  </div>
+  <div class="progress">
+    <div class="bar"><b id="barFill"></b></div>
+    <span id="progText" class="status" style="font-variant-numeric:tabular-nums">Выполнено 0 из 24 тренировок</span>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th style="text-align:left;padding-left:12px">Неделя</th><th>А</th><th>Б</th><th>В</th><th>Спина</th></tr></thead>
+      <tbody id="logBody"></tbody>
+    </table>
+  </div>
+  <span id="saveStatus" class="status">Отметки сохраняются в браузере этого телефона. Открывайте страницу всегда в одном и том же браузере.</span>
+</section>
+
+<footer>Программа носит общий характер и не заменяет консультацию врача.</footer>
+</div>
+
+<script>
+/* ---------- Мышцы ---------- */
+const M={
+  g:{n:"Большая ягодичная",c:"--m-glute"},
+  gm:{n:"Средняя и малая ягодичные",c:"--m-glute"},
+  rot:{n:"Наружные вращатели бедра",c:"--m-glute"},
+  add:{n:"Приводящие мышцы бедра",c:"--m-add"},
+  gr:{n:"Тонкая мышца бедра",c:"--m-add"},
+  ham:{n:"Задняя поверхность бедра",c:"--m-other"},
+  q:{n:"Квадрицепс",c:"--m-other"},
+  tfl:{n:"Напрягатель широкой фасции",c:"--m-other"},
+  ch:{n:"Большая грудная",c:"--m-chest"},
+  dl:{n:"Передние дельты",c:"--m-other"},
+  tr:{n:"Трицепс",c:"--m-other"},
+  core:{n:"Кор: поперечная и прямая мышцы живота",c:"--m-core"},
+  ip:{n:"Сгибатели бедра",c:"--m-other"}
+};
+
+/* ---------- Схемы: позы ---------- */
+const F="var(--m-glute)",A="var(--m-add)",C="var(--m-chest)",K="var(--m-core)";
+const SOFA={box:[142,70,52,30]};
+const lyingSide=(top)=>({head:[28,82],lines:[[40,90,100,90],[42,93,20,95],[62,90,64,99],...top]});
+const P={
+  bridge:{start:{head:[38,90],lines:[[47,95,100,95,128,72,146,98],[50,97,92,98]]},
+          end:{head:[38,90],lines:[[47,95,100,70,132,62,146,98],[50,97,92,98]]},
+          hl:[{c:[101,77,9],col:F}],arrows:[[112,93,112,72]],cap:"Вид сбоку: таз поднимается до прямой линии плечи — колени"},
+  bridgePillow:{start:{head:[38,90],lines:[[47,95,100,95,128,72,146,98],[50,97,92,98]]},
+          end:{head:[38,90],lines:[[47,95,100,70,132,62,146,98],[50,97,92,98]]},
+          seg:[{p:[103,69,128,63],col:A}],pillow:[131,58],hl:[{c:[101,77,7],col:F}],arrows:[[112,93,112,72]],cap:"Подушка между коленями сжата всё время подъёма"},
+  bridgeOne:{start:{head:[38,90],lines:[[47,95,100,95,128,72,146,98],[100,95,130,88,162,82],[50,97,92,98]]},
+          end:{head:[38,90],lines:[[47,95,100,70,132,62,146,98],[100,70,132,62,164,54],[50,97,92,98]]},
+          hl:[{c:[101,77,9],col:F}],arrows:[[112,93,112,72]],cap:"Свободная нога вытянута по линии бедра опорной"},
+  iso:{end:{head:[38,90],lines:[[47,95,100,95,128,72,146,98],[50,97,92,98]]},
+          seg:[{p:[103,93,125,74],col:A}],pillow:[130,66],arrows:[[112,50,124,60],[150,50,138,60]],cap:"Колени давят на подушку навстречу друг другу, 70–80 % усилия"},
+  donkey:{start:{head:[152,50],lines:[[143,58,85,60],[140,60,140,99],[85,60,85,99,60,99]]},
+          end:{head:[152,50],lines:[[143,58,85,60],[140,60,140,99],[85,60,85,99,60,99],[85,60,54,60,54,34]]},
+          hl:[{c:[84,54,8],col:F}],arrows:[[66,92,52,44]],ghostLines:[[85,60,85,99,60,99]],cap:"Колено поднимается назад-вверх только до линии спины"},
+  hydrant:{start:{head:[100,36],lines:[[82,48,118,48],[100,48,100,56],[84,56,116,56],[82,48,80,99],[118,48,120,99],[85,56,85,99],[115,56,115,99]]},
+          end:{head:[100,36],lines:[[82,48,118,48],[100,48,100,56],[84,56,116,56],[82,48,80,99],[118,48,120,99],[85,56,85,99],[115,56,148,62,152,72]]},
+          hl:[{c:[116,58,8],col:F}],arrows:[[128,92,150,70]],ghostLines:[[115,56,115,99]],cap:"Вид сзади: согнутая нога уходит в сторону до уровня таза"},
+  clam:{start:lyingSide([[100,90,138,96,108,99],[100,88,138,92,108,95]]),
+          end:lyingSide([[100,90,138,96,108,99],[100,88,132,62,110,94]]),
+          hl:[{c:[99,84,8],col:F}],arrows:[[150,90,140,62]],ghostLines:[[100,88,138,92,108,95]],cap:"Лёжа на боку: стопы вместе, раскрывается только колено"},
+  sideRaise:{start:lyingSide([[100,90,140,95,176,98],[100,88,140,92,176,94]]),
+          end:lyingSide([[100,90,140,95,176,98],[100,88,138,74,174,58]]),
+          hl:[{c:[98,84,8],col:F}],arrows:[[186,92,184,60]],ghostLines:[[100,88,140,92,176,94]],cap:"Верхняя нога прямая, носок смотрит вперёд"},
+  adduct:{start:lyingSide([[100,88,122,66,120,98],[100,92,140,96,176,98]]),
+          end:lyingSide([[100,88,122,66,120,98],[100,92,140,90,176,82]]),
+          seg:[{p:[104,92,138,90],col:A}],arrows:[[188,98,188,80]],ghostLines:[[100,92,140,96,176,98]],cap:"Верхняя нога стоит впереди, поднимается нижняя прямая нога"},
+  sumo:{start:{head:[100,16],lines:[[100,24,100,56],[86,28,114,28],[86,28,84,44,97,46],[114,28,116,44,103,46],[92,56,108,56],[92,56,80,78,72,99,64,99],[108,56,120,78,128,99,136,99]]},
+          end:{head:[100,30],lines:[[100,38,100,70],[86,42,114,42],[86,42,84,57,97,58],[114,42,116,57,103,58],[92,70,108,70],[92,70,70,75,72,99,64,99],[108,70,130,75,128,99,136,99]]},
+          seg:[{p:[90,71,74,74],col:A},{p:[110,71,126,74],col:A}],arrows:[[150,30,150,58]],cap:"Вид спереди: таз опускается до угла 90° в коленях, колени по линии носков"},
+  palms:{end:{head:[100,20],lines:[[100,30,100,80],[80,36,120,36],[80,36,66,52,96,50],[120,36,134,52,104,50],[90,80,110,80],[90,80,88,99],[110,80,112,99]]},
+          hl:[{c:[90,42,7],col:C},{c:[110,42,7],col:C}],arrows:[[60,64,90,58],[140,64,110,58]],cap:"Ладони у груди, локти в стороны, давить ладонью в ладонь"},
+  wall:{wall:160,start:{head:[124,24],lines:[[62,99,90,66,118,34],[118,36,160,38]]},
+          end:{head:[141,22],lines:[[62,99,96,64,134,32],[134,34,142,52,160,38]]},
+          hl:[{c:[136,40,7],col:C}],arrows:[[100,20,124,14]],cap:"Тело прямое от пяток до макушки, грудь приближается к стене"},
+  sofaPush:{...SOFA,start:{head:[133,48],lines:[[40,99,82,78,125,55],[125,57,146,70]]},
+          end:{head:[140,60],lines:[[40,99,85,83,132,66],[132,68,124,82,146,70]]},
+          hl:[{c:[133,72,7],col:C}],arrows:[[112,40,124,58]],cap:"Руки на сиденье дивана, корпус опускается одной линией"},
+  climber:{...SOFA,start:{head:[133,48],lines:[[40,99,82,78,125,55],[125,57,146,70]]},
+          end:{head:[133,48],lines:[[40,99,82,78,125,55],[125,57,146,70],[82,78,110,80,96,97]]},
+          seg:[{p:[90,74,118,59],col:K}],arrows:[[58,90,100,86]],ghostLines:[[40,99,82,78]],cap:"Колено шагом подтягивается к груди, затем смена ноги"}
+};
+
+const NS="http://www.w3.org/2000/svg";
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e}
+function pts(a){let s=[];for(let i=0;i<a.length;i+=2)s.push(a[i]+","+a[i+1]);return s.join(" ")}
+let uid=0;
+function drawSchema(key){
+  const p=P[key];const id="ah"+(uid++);
+  const svg=el("svg",{viewBox:"0 0 200 108",role:"img","aria-label":p.cap});
+  const defs=el("defs",{});const mk=el("marker",{id:id,viewBox:"0 0 10 10",refX:"8",refY:"5",markerWidth:"6",markerHeight:"6",orient:"auto-start-reverse"});
+  mk.appendChild(el("path",{d:"M0,0 L10,5 L0,10 z",class:"s-arrowhead"}));defs.appendChild(mk);svg.appendChild(defs);
+  svg.appendChild(el("line",{x1:6,y1:101,x2:194,y2:101,class:"s-floor"}));
+  if(p.wall!=null)svg.appendChild(el("rect",{x:p.wall,y:6,width:8,height:95,class:"s-prop"}));
+  if(p.box)svg.appendChild(el("rect",{x:p.box[0],y:p.box[1],width:p.box[2],height:p.box[3],rx:3,class:"s-prop"}));
+  // ghost (start)
+  if(p.start){
+    const ghosts=p.ghostLines||p.start.lines;
+    ghosts.forEach(l=>svg.appendChild(el("polyline",{points:pts(l),class:"s-ghost"})));
+    if(!p.ghostLines && p.start.head)svg.appendChild(el("circle",{cx:p.start.head[0],cy:p.start.head[1],r:7,class:"s-ghost-h"}));
+  }
+  (p.hl||[]).forEach(h=>svg.appendChild(el("circle",{cx:h.c[0],cy:h.c[1],r:h.c[2],fill:h.col,"fill-opacity":".45"})));
+  if(p.pillow)svg.appendChild(el("ellipse",{cx:p.pillow[0],cy:p.pillow[1],rx:9,ry:6,class:"s-prop"}));
+  p.end.lines.forEach(l=>svg.appendChild(el("polyline",{points:pts(l),class:"s-body"})));
+  svg.appendChild(el("circle",{cx:p.end.head[0],cy:p.end.head[1],r:7,class:"s-head"}));
+  (p.seg||[]).forEach(s=>svg.appendChild(el("line",{x1:s.p[0],y1:s.p[1],x2:s.p[2],y2:s.p[3],stroke:s.col,"stroke-width":7,"stroke-linecap":"round","stroke-opacity":".8"})));
+  (p.arrows||[]).forEach(a=>svg.appendChild(el("line",{x1:a[0],y1:a[1],x2:a[2],y2:a[3],class:"s-arrow","marker-end":"url(#"+id+")"})));
+  return svg;
+}
+
+/* ---------- Упражнения ---------- */
+const EX={
+A:[
+{n:"А1",t:"Ягодичный мостик",fig:"bridge",dose:["Нед. 1–2: 12 повторов","Нед. 3–4: 15 повторов"],
+ mus:[["g",1],["ham"],["core"]],
+ steps:["Лечь на спину, колени согнуты, стопы на ширине таза. Пятки в 20–25 см от ягодиц. Руки вдоль тела ладонями вниз.",
+ "Подтянуть живот и мягко прижать поясницу к полу.",
+ "На выдохе давить пятками в пол и поднять таз до прямой линии плечи — таз — колени.",
+ "Вверху сжать ягодицы и удержать 2 секунды.",
+ "На вдохе медленно опустить таз, не опуская его на пол полностью, и начать следующий повтор."],
+ err:["Подъём таза выше линии корпуса с прогибом в пояснице.","Опора на носки вместо пяток: работает бедро, а не ягодицы.","Колени разваливаются наружу или сводятся внутрь."],
+ safe:"Высота подъёма — строго до линии корпуса. При дискомфорте в пояснице уменьшить амплитуду вдвое."},
+{n:"А2",t:"«Ослик»: отведение согнутой ноги назад",fig:"donkey",dose:["Нед. 1–2: 10 на сторону","Нед. 3–4: 12–15 на сторону"],
+ mus:[["g",1],["ham"],["core"]],
+ steps:["Встать на четвереньки: ладони под плечами, колени под тазом. Спина ровная, взгляд в пол, шея продолжает линию спины.",
+ "Подтянуть живот, зафиксировать таз. Корпус не двигается всё упражнение.",
+ "На выдохе поднять ногу, согнутую под прямым углом, назад-вверх. Стопа как будто толкает потолок.",
+ "Остановиться, когда бедро на уровне спины. Пауза 1 секунда, сжать ягодицу.",
+ "Медленно вернуть колено вниз, не касаясь пола. Сделать все повторы на одну ногу, затем на другую."],
+ err:["Подъём ноги выше уровня спины: поясница прогибается.","Разворот таза в сторону рабочей ноги.","Раскачивание и рывки."],
+ safe:"Главное правило при грыже: бедро не выше линии спины. Если устают запястья — опора на предплечья."},
+{n:"А3",t:"«Ракушка» лёжа на боку",fig:"clam",dose:["Нед. 1–2: 12 на сторону","Нед. 3–4: 15–20 на сторону"],
+ mus:[["gm",1],["rot"]],
+ steps:["Лечь на бок, нижняя рука под головой. Колени согнуты примерно на 45°, пятки на одной линии с ягодицами. Ноги сложены одна на другую.",
+ "Верхнюю руку упереть ладонью в пол перед собой для устойчивости.",
+ "Не разъединяя стоп, на выдохе раскрыть верхнее колено вверх, как раковину.",
+ "Пауза 1 секунда в верхней точке, затем медленно закрыть."],
+ err:["Таз заваливается назад вслед за коленом.","Стопы разъединяются.","Быстрые махи без паузы."],
+ safe:"Таз и поясница неподвижны. Амплитуда меньше, но чище — так эффективнее."},
+{n:"А4",t:"Подъём прямой ноги лёжа на боку",fig:"sideRaise",dose:["Нед. 1–2: 12 на сторону","Нед. 3–4: 15 на сторону"],
+ mus:[["gm",1],["tfl"]],
+ steps:["Лечь на бок, тело одной линией. Нижнюю ногу можно согнуть в колене для устойчивости.",
+ "Верхнюю ногу выпрямить, носок на себя и направлен вперёд. Ногу чуть отвести назад от линии тела.",
+ "На выдохе поднять ногу на 30–40 см. Движение ведёт пятка.",
+ "Пауза 1 секунда, медленно опустить, не касаясь нижней ноги."],
+ err:["Носок разворачивается к потолку: включается передняя поверхность бедра вместо ягодицы.","Корпус качается назад-вперёд.","Нога уходит вперёд от линии тела."],
+ safe:""},
+{n:"А5",t:"Отжимания от стены",fig:"wall",dose:["Нед. 1–2: 10 повторов","Нед. 3–4: 12–15 повторов"],
+ mus:[["ch",1],["dl"],["tr"],["core"]],
+ steps:["Встать лицом к стене на расстоянии вытянутых рук плюс полшага. Ладони на стене на уровне груди, чуть шире плеч.",
+ "Тело — прямая линия от пяток до макушки, живот подтянут, ягодицы напряжены.",
+ "На вдохе согнуть руки и приблизить грудь к стене. Локти под углом около 45° к корпусу.",
+ "На выдохе оттолкнуться, мысленно сводя грудные мышцы к центру.",
+ "Усложнение: отойти от стены на полшага дальше."],
+ err:["Провисание в пояснице или таз назад.","Локти разведены в стороны под 90°.","Голова тянется к стене раньше груди."],
+ safe:""}
+],
+B:[
+{n:"Б1",t:"Мостик со сжатием подушки",fig:"bridgePillow",dose:["Нед. 1–2: 12 повторов","Нед. 3–4: 15 повторов"],
+ mus:[["add",1],["g",1],["core"]],
+ steps:["Исходное положение как в ягодичном мостике. Между коленями зажать подушку или свёрнутое полотенце.",
+ "Сжать подушку коленями и удерживать сжатие до конца подхода.",
+ "На выдохе поднять таз до линии плечи — колени, продолжая сжимать подушку.",
+ "Вверху пауза 2 секунды, медленно опуститься."],
+ err:["Ослабление сжатия в верхней точке.","Прогиб в пояснице."],
+ safe:"Высота подъёма — до линии корпуса, не выше."},
+{n:"Б2",t:"Приведение ноги лёжа на боку",fig:"adduct",dose:["Нед. 1–2: 12 на сторону","Нед. 3–4: 15–20 на сторону"],
+ mus:[["add",1],["gr"]],
+ steps:["Лечь на бок, голова на нижней руке.",
+ "Верхнюю ногу согнуть и поставить стопу на пол перед коленом нижней ноги. Если неудобно — положить колено верхней ноги на подушку.",
+ "Нижняя нога прямая, носок на себя.",
+ "На выдохе поднять нижнюю ногу на 10–15 см. Пауза 1–2 секунды.",
+ "Медленно опустить, не касаясь пола, и повторить."],
+ err:["Подъём за счёт поясницы и корпуса.","Рывки вместо плавного подъёма.","Разворот носка вверх."],
+ safe:"Амплитуда небольшая — это нормально. Работает внутренняя поверхность бедра."},
+{n:"Б3",t:"Изометрическое сжатие подушки лёжа",fig:"iso",dose:["Нед. 1–2: удержание 20 с","Нед. 3–4: удержание 30 с"],
+ mus:[["add",1],["core"]],
+ steps:["Лечь на спину, колени согнуты, стопы на полу. Подушку зажать между коленями.",
+ "Сжимать подушку коленями на 70–80 % от максимального усилия.",
+ "Держать заданное время, дышать ровно: вдох носом, выдох ртом.",
+ "Плавно расслабиться."],
+ err:["Задержка дыхания.","Отрыв поясницы от пола."],
+ safe:"Безопасное упражнение при грыже: позвоночник нагрузки не получает."},
+{n:"Б4",t:"Неглубокий присед сумо у опоры",fig:"sumo",dose:["Нед. 1–2: 10 повторов","Нед. 3–4: 12 повторов"],
+ mus:[["add",1],["g",1],["q"]],
+ steps:["Встать у спинки устойчивого стула и держаться одной рукой.",
+ "Стопы шире плеч в полтора раза, носки развернуты наружу на 30–45°.",
+ "Вес на всю стопу: пятка, основание большого пальца, основание мизинца. Свод стопы не заваливается внутрь.",
+ "На вдохе отвести таз назад-вниз. Колени идут по линии носков. Опуститься до угла 90° в коленях.",
+ "На выдохе подняться, сжимая ягодицы и как бы сводя бёдра к центру."],
+ err:["Колени заваливаются внутрь.","Наклон корпуса вперёд с округлением спины.","Присед глубже 90°."],
+ safe:"Корпус вертикальный, спина ровная. Глубже 90° не опускаться."},
+{n:"Б5",t:"Изометрия ладонями",fig:"palms",dose:["Нед. 1–2: 3 × 15 с","Нед. 3–4: 3 × 20 с"],
+ mus:[["ch",1],["dl"]],
+ steps:["Стоять или сидеть ровно, плечи опущены.",
+ "Соединить ладони перед грудью. Локти разведены в стороны чуть ниже уровня плеч.",
+ "С силой давить ладонью в ладонь на 70–80 % усилия. Почувствовать напряжение в груди.",
+ "Держать 15–20 секунд, отдых 10 секунд, выполнить 3 раза."],
+ err:["Задержка дыхания.","Плечи поднимаются к ушам."],
+ safe:""}
+],
+C:[
+{n:"В1",t:"Мостик на одной ноге",fig:"bridgeOne",dose:["Нед. 1–2: обычный мостик со смещением веса, 10","Нед. 3–4: 8–10 на ногу"],
+ mus:[["g",1],["ham"],["core"]],
+ steps:["Исходное положение как в ягодичном мостике.",
+ "Недели 1–2: поднять таз на двух ногах и в верхней точке перенести вес на одну пятку на 2 секунды, затем на другую.",
+ "Недели 3–4: выпрямить одну ногу по линии бедра. На выдохе поднять таз на опорной ноге.",
+ "Пауза 1–2 секунды, медленно опуститься. Все повторы на одну ногу, затем на другую."],
+ err:["Таз заваливается в сторону свободной ноги.","Прогиб в пояснице."],
+ safe:"Если таз не держится ровно — вернуться к варианту недель 1–2."},
+{n:"В2",t:"«Пожарный гидрант»",fig:"hydrant",dose:["Нед. 1–2: 10 на сторону","Нед. 3–4: 12–15 на сторону"],
+ mus:[["gm",1],["g"],["core"]],
+ steps:["Встать на четвереньки: ладони под плечами, колени под тазом. Живот подтянут.",
+ "Не разгибая колена, на выдохе отвести ногу в сторону до уровня таза.",
+ "Пауза 1 секунда, медленно вернуть, не касаясь коленом пола."],
+ err:["Корпус наклоняется в противоположную сторону.","Таз поворачивается вслед за ногой.","Прогиб в пояснице."],
+ safe:"Если тянет поясницу — уменьшить высоту отведения."},
+{n:"В3",t:"Приведение ноги лёжа на боку",ref:"Техника как в упражнении Б2.",dose:["Нед. 1–2: 12 на сторону","Нед. 3–4: 15–20 на сторону"],mus:[["add",1],["gr"]]},
+{n:"В4",t:"Присед сумо с паузой внизу",ref:"Техника как в упражнении Б4. Отличие: в нижней точке пауза 2 секунды, затем подъём.",dose:["Нед. 1–2: 8–10 повторов","Нед. 3–4: 10–12 повторов"],mus:[["add",1],["g",1],["q"]]},
+{n:"В5",t:"Отжимания от дивана",fig:"sofaPush",dose:["Нед. 1–2: 8 повторов","Нед. 3–4: 10–12 повторов"],
+ mus:[["ch",1],["tr"],["dl"],["core"]],
+ steps:["Упереться ладонями в край сиденья дивана или устойчивого стола чуть шире плеч. Диван не должен сдвигаться.",
+ "Отступить ногами назад до прямой линии тела. Живот подтянут, ягодицы напряжены.",
+ "На вдохе согнуть руки, опуская грудь к краю опоры. Локти под 45° к корпусу.",
+ "На выдохе выжать себя вверх."],
+ err:["Провисание таза — нагрузка уходит в поясницу.","Таз поднят «домиком».","Локти в стороны."],
+ safe:"Отжимания с колен на полу — только если корпус держится без прогиба. Иначе остаться на опоре."}
+],
+K:[
+{n:"Ф",t:"Альпинист с опорой на диван",fig:"climber",dose:["Нед. 1–2: 3 × 20 с, отдых 30 с","Нед. 3–4: 4 × 30 с, отдых 30 с"],
+ mus:[["core",1],["ip"],["dl"],["ch"]],
+ steps:["Упор ладонями в сиденье дивана или стула, придвинутого к стене. Ладони под плечами.",
+ "Отступить ногами назад до прямой линии тела: от пяток до макушки.",
+ "Подтянуть одно колено к груди и вернуть носок назад. Затем то же другой ногой.",
+ "Темп ровный, шаговый, без прыжков. Дыхание свободное."],
+ err:["Таз поднимается вверх или провисает.","Прыжки со сменой ног: нагрузка на стопы и поясницу.","Слишком быстрый темп с потерей формы."],
+ safe:"Плоскостопие: только шаговый вариант. Грыжа: при тянущем ощущении в пояснице взять опору выше (стол, подоконник)."}
+]};
+
+function chip(code,main){const m=M[code];const s=document.createElement("span");s.className="chip"+(main?" main":"");
+  const i=document.createElement("i");i.style.background="var("+m.c+")";s.appendChild(i);s.appendChild(document.createTextNode(m.n));return s}
+function list(cls,items){const l=document.createElement("ol");l.className="clean "+(cls||"");items.forEach(t=>{const li=document.createElement("li");li.textContent=t;l.appendChild(li)});return l}
+function block(label,node){const d=document.createElement("div");const l=document.createElement("div");l.className="lbl";l.textContent=label;d.appendChild(l);d.appendChild(node);return d}
+
+function card(e){
+  const c=document.createElement("article");c.className="ex";
+  const top=document.createElement("div");top.className="ex-top";
+  const num=document.createElement("span");num.className="ex-num";num.textContent=e.n;
+  const tt=document.createElement("div");tt.className="ex-title";
+  const h=document.createElement("h3");h.textContent=e.t;
+  const d=document.createElement("div");d.className="dose";e.dose.forEach(x=>{const s=document.createElement("span");s.textContent=x;d.appendChild(s)});
+  tt.appendChild(h);tt.appendChild(d);top.appendChild(num);top.appendChild(tt);c.appendChild(top);
+  if(e.fig){const f=document.createElement("figure");f.className="fig";f.style.margin="10px 16px 0";f.appendChild(drawSchema(e.fig));
+    const cap=document.createElement("figcaption");cap.className="cap";cap.textContent=P[e.fig].cap;f.appendChild(cap);c.appendChild(f)}
+  const b=document.createElement("div");b.className="ex-body";
+  const ch=document.createElement("div");ch.className="chips";e.mus.forEach(m=>ch.appendChild(chip(m[0],m[1])));
+  b.appendChild(block("Работают мышцы",ch));
+  if(e.ref){const p=document.createElement("p");p.className="ref";p.textContent=e.ref;b.appendChild(p)}
+  if(e.steps)b.appendChild(block("Как выполнять",list("",e.steps)));
+  if(e.err){const ul=document.createElement("ul");ul.className="clean err";e.err.forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.appendChild(li)});b.appendChild(block("Частые ошибки",ul))}
+  if(e.safe){const s=document.createElement("p");s.className="safe";const bb=document.createElement("b");bb.textContent="Безопасность: ";s.appendChild(bb);s.appendChild(document.createTextNode(e.safe));b.appendChild(s)}
+  c.appendChild(b);return c;
+}
+["A","B","C","K"].forEach(k=>{const host=document.getElementById("list-"+k);EX[k].forEach(e=>host.appendChild(card(e)))});
+
+/* ---------- Журнал ---------- */
+const WEEKS=8;
+const PARAM={1:"освоение техники",2:"освоение техники",3:"3 круга",4:"3 круга",5:"с отягощением",6:"с отягощением",7:"с отягощением",8:"с отягощением"};
+let state={start:"",m:{}};
+const LS="trening-evgesha-v1";
+try{const raw=localStorage.getItem(LS);if(raw){const s=JSON.parse(raw);if(s&&typeof s==="object")state={start:s.start||"",m:s.m||{}}}}catch(e){}
+
+const CYCLE_DAY=["","done","skip"],CYCLE_BACK=["","ok","pain"];
+const TXT={"":"—",done:"✓",skip:"пропуск",ok:"норма",pain:"боль"};
+const tbody=document.getElementById("logBody");
+const startInput=document.getElementById("startDate");
+const statusEl=document.getElementById("saveStatus");
+
+function fmt(d){return d.toLocaleDateString("ru-RU",{day:"numeric",month:"short"})}
+function weekLabel(w){
+  if(!state.start)return PARAM[w];
+  const s=new Date(state.start+"T00:00:00");if(isNaN(s))return PARAM[w];
+  const a=new Date(s);a.setDate(s.getDate()+(w-1)*7);const b=new Date(a);b.setDate(a.getDate()+6);
+  return fmt(a)+" – "+fmt(b)+" · "+PARAM[w];
+}
+function render(){
+  tbody.textContent="";
+  for(let w=1;w<=WEEKS;w++){
+    const tr=document.createElement("tr");
+    const td=document.createElement("td");td.className="wk";const bb=document.createElement("b");bb.textContent="Неделя "+w;const sm=document.createElement("small");sm.textContent=weekLabel(w);td.appendChild(bb);td.appendChild(sm);tr.appendChild(td);
+    ["A","B","C","S"].forEach(d=>{
+      const key=w+d;const v=state.m[key]||"";
+      const c=document.createElement("td");const btn=document.createElement("button");btn.type="button";btn.className="cell";btn.id="c-"+key;btn.dataset.v=v;btn.textContent=TXT[v];
+      btn.setAttribute("aria-label","Неделя "+w+", "+(d==="S"?"спина":"день "+({A:"А",B:"Б",C:"В"}[d]))+": "+TXT[v]);
+      btn.addEventListener("click",()=>{const cyc=d==="S"?CYCLE_BACK:CYCLE_DAY;const nv=cyc[(cyc.indexOf(state.m[key]||"")+1)%cyc.length];
+        if(nv)state.m[key]=nv;else delete state.m[key];render();save()});
+      c.appendChild(btn);tr.appendChild(c)});
+    tbody.appendChild(tr);
+  }
+  startInput.value=state.start||"";
+  let done=0;for(const k in state.m)if(state.m[k]==="done")done++;
+  document.getElementById("barFill").style.width=Math.round(done/(WEEKS*3)*100)+"%";
+  document.getElementById("progText").textContent="Выполнено "+done+" из "+(WEEKS*3)+" тренировок";
+}
+startInput.addEventListener("change",()=>{state.start=startInput.value||"";render();save()});
+
+let dbDoc=null;let _u=null,saveTimer=null,saving=false,pending=false;
+function save(){
+  try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}
+  if(!dbDoc)return;
+  clearTimeout(saveTimer);saveTimer=setTimeout(flush,600);
+}
+async function flush(){
+  if(saving){pending=true;return}
+  saving=true;statusEl.textContent="Сохраняю…";
+  try{await dbDoc.set({start:state.start,m:state.m});statusEl.textContent="Сохранено в аккаунте — отметки видны на любом устройстве."}
+  catch(e){statusEl.textContent="Не удалось сохранить в аккаунте. Отметки остались на этом устройстве."}
+  saving=false;if(pending){pending=false;flush()}
+}
+render();
+
+
+</script>
+
+</body>
+</html>
